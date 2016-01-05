@@ -51,4 +51,4 @@ build/cores/
 hal/soft-ap/.idea/
 
 #Private folders
-/ignoreMe
+ignoreMe/
