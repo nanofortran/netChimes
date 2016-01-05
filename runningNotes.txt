@@ -1,0 +1,130 @@
+The netChimes server is hosted by 1984hosting.com @:
+
+VPS NAME: netChimes
+VPS IP: 93.95.228.77
+VPS USER NAME: jason
+VPS PASSWORD FOR USER jason: fooPuo5faith4XeiH1ai (Ubun2_txdl27)
+VPS ECDSA KEY FINGERPRINT: 62:4d:d2:5d:18:15:8e:6f:d0:ef:90:2b:e8:cf:f2:2b
+
+The access token for the user account jason@netchimes.org is:
+
+5a2def527bed6cbb0ac43da59cb0a836e9213b21
+
+To access devices registered to this token, place the following URL in the browser:
+
+http://93.95.228.77:8080/v1/devices?access_token=5a2def527bed6cbb0ac43da59cb0a836e9213b21
+
+See spreadsheet file for list of sensors . . .
+
+2b0036000547343339373536
+
+
+
+340021000647343000000000
+
+
+
+Below is DEPRECATED
+netChimesTester
+
+54ff72066667515105381367
+
+
+Connecting a Photon to the netChimes Server (Iceland)
+
+1. Get the Photon’s ID via Cool Term. Write this down!
+
+	Photon 1 ID is 340021000647343339373536
+
+2. You will need to get the server’s secret ID by downloading it from the server, try this
+	- navigate to where you will store the server secret (cd)
+	- 
+
+	- get the pub.pem file . . .
+
+	- spark keys server
+
+
+
+
+
+
+
+
+when all goes pete tong . . 
+Sorry for the late follow up. Had a few people with this issue, so now I see the pattern and the solution.
+
+NB! only do this if the device has NEVER connected to the cloud before and has the intermittent red blink while fast flashing blue. If the device has previously connected to the cloud successfully then the problem lies elsewhere and these steps are not required.
+
+Using particle, first generate a new key:
+
+particle keys new
+Then put the device in DFU mode and flash this new key
+
+dfu-util -d 2b04:d006 -a 1 -s 34 -D device.der
+Then reboot the device and it should connect to the cloud.
+
+
+—
+In summary:
+
+particle keys server cloud_public.der 93.95.228.77
+particle keys new photon
+particle keys load photon.der
+particle keys send photon.pub.pem
+
+
+—
+
+
+https://community.particle.io/t/photon-local-cloud-spark-server/13215/4
+
+
+make clean all PLATFORM=photon COMPILE_LTO=n APP=netChimes1.0  program-dfu
+
+——
+Photon build cheatsheet . . .
+
+If you have never built from source before or if you have changed the source code in any way, you will need to rebuild the 2 SYSTEM MODULES (These later will be compiled with your USER code — the wiring code with which you program your micro-controller).
+
+How to build the system modules . . . 
+
+0. cd firmware-develop
+	make
+
+1. Make sure you have downloaded the latest firmware (and unzip) to a known location, and keep the file structure intact (don’t go changing file names)
+
+2. You will need to compile the modules separately (part 1 and part 2) . . . here me go . . .
+
+	cd /Your/local/location/firmware-develop/modules/photon/
+	cd system-part1
+	make
+
+Should you have made changes and need to make a clean build of all the components, then
+make clean all
+
+Do the same with system-part2
+
+	cd /Your/local/location/firmware-develop/modules/photon/
+	cd system-part2
+	make
+
+Both these components/modules (system-part1 and system-part2) should now show up in the following directory:
+
+	
+—
+
+https://community.particle.io/t/spark-publish-adjusting-the-4-burst-per-second-rule/11381
+
+Just to clarify for posterity, spark_protocol.cpp can be found . . .
+
+for Core in /core-communications-lib/src
+
+for Photon in communication/src
+
+or, if on a Mac, just type spark_protocol.cpp into Spotlight!
+
+Thanks for keeping the thread alive as we transition to Photon.
+
+jgeist
+

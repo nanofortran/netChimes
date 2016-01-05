@@ -1,0 +1,67 @@
+h1 { font-family: "Ubuntu",sans-serif;
+	font-size: 36px; 
+	font-style: normal; 
+	font-variant: normal; 
+	font-weight: 500; 
+	line-height: 10px;}
+
+h2 { font-family: "Ubuntu",sans-serif;
+	color:blue;
+	font-size: 16px; 
+	font-style: normal; 
+	font-variant: normal; 
+	font-weight: 500; 
+	line-height: 26.4px; }
+
+
+#container {
+		width: 900;
+		border: 3px gray;
+		background: white;
+	}
+
+#break {
+	width: 800;
+	height: 10;
+	background: white;
+	margin: 0 auto;
+}
+	
+#header {
+	width: 800;
+	background: white;
+	margin: 0 auto;
+}
+
+#intro {
+	width: 800;
+	background: white;
+	margin: 0 auto;
+}
+
+#blurb {
+	width: 800;
+	background: white;
+	margin: 0 auto;
+}
+
+#circuit {
+	width: 800;
+	background: white;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#credits {
+	width: 800;
+	background: white;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#vimeo {
+	width: 800;
+	background: white;
+	margin: 0 auto;
+	text-align: center;
+}

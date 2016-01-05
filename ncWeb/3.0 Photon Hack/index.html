@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+
+  <link rel="stylesheet" href="http://openlayers.org/en/v3.10.1/css/ol.css" type="text/css">
+  <script src="http://openlayers.org/en/v3.10.1/build/ol.js" type="text/javascript"></script>
+  
+  <script language="javascript" type="text/javascript" src="assets/js/p5.min.js"></script>
+  <script language="javascript" type="text/javascript" src="assets/js/howler.js"></script>
+  <script language="javascript" type="text/javascript" src="sketchPhotonHack.js"></script>
+
+  <link rel="stylesheet" href="styleSheet.css">
+  <link rel="stylesheet" href="http://openlayers.org/en/v3.10.1/css/ol.css" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Ubuntu:400,400italic,500,500italic,300italic,300" rel="stylesheet" type="text/css">  
+     
+</head>
+
+<div id = "container">
+<div id = "break">
+<div id = "header">
+<h1>netChimes</h1>
+<h2>a globally distributed wind instrument</h2>
+</div>
+
+<div id = "intro">
+<p>netChimes is a wind-actuated instrument comprised of a collection of 20 globally-distributed wind chime sensors. These sensors are connected via the Internet to a collection of physical chimes (a carillon of sorts) located at a public venue. When a remote sensor is triggered by the wind, a corresponding chime is struck at the installation site. As conceived, the installation sonifies and visualizes ambient wind activity, rendering those intangible things &#151 the Internet, the global village, the wind &#151 tangible.</p>
+
+<img src="assets/images/sensor1.JPG" alt = "A netChimes sensor.">
+
+<p>The first stage of this project, to build and distribute 20 netChimes sensors around the planet, is currently underway.  With the generous support of a Part-time Faculty Development Grant from Columbia College Chicago, the array will be deployed by the end of Summer 2015.</p>
+
+<img src="assets/images/sensor2.JPG" alt = "A netChimes sensor's interior.">
+
+<p>Each sensor contains a custom printed circuit board that holds a ring of six magnetic (Hall) switches.  A small magnet in the base of the sail trips the switches, registering a chime strike as the sail is stirred by the wind.</p>
+
+<div id="circuit">
+<img src="assets/images/sensor3.JPG" alt = "A netChimes sensor's circuit board." width = "350" height = "350">
+<img src="assets/images/sensor4.JPG" alt = "A netChimes sensor's particle.io board." width = "350" height = "350">
+</div> <!-close circuit>
+
+<p style = "text-align: left">The haiku printed on each circuit board reads:</p>
+<blockquote style = "text-align: center"><em>
+set my sensor to<br>
+catch digital butterflies<br>
+a tsunami rings<br></em>
+</blockquote>
+
+<p>The reverse of the sensor houses a microprocessor to read the magnetic switches and a Wi-Fi radio to communicate with the network.  The entire unit is water/weather resistant.</p>
+
+<p>Currently there is the a single Chicago-based sensor relaying real-time ambient wind activity to the netChimes server and array. The visualization/sonification below displays live netChimes data streams. As more sensors are added globally, this page will be updated.</p>
+ 
+
+<div id = "map" class ="map">
+</div>
+
+
+
+<div id = "intro">
+ <p style = "width: 800">The final component of the netChimes project is the fabrication and installation of a set of physical chimes and interactive video elements. A prelimnary sketch of the installation is provided below.</p>
+</div>
+
+<div id = "vimeo">
+  <iframe src="https://player.vimeo.com/video/114381562?autoplay=1&loop=1&color=ffffff" width="800" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+</div>
+  <p>For more information related to netChimes, please contact Jason Geistweidt at 
+  <a href = "http://www.geistweidt.com">www.geistweidt.com</a>.</p>
+
+
+
+  <p>netChimes utilizes the particle.io board and is underwritten in part by the Center for Innovation and Teaching Excellence at Columbia College Chicago.</p>
+
+<div id="credits">
+  <img src="assets/images/particle.png" alt = "particle.io" >
+  <img src="assets/images/blank.png" alt = "blank">
+  <img src="assets/images/ccc.png" alt = "Columbia College Chicago">
+</div>
+
+  <p>(c) jason e geistweidt 2015</p>
+
+
+</div> <!-close "container"->
+<body>
+
+
+</body>
+</div>
+</div>
+</html>
