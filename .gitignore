@@ -49,3 +49,6 @@ nbproject/
 build/target/
 build/cores/
 hal/soft-ap/.idea/
+
+#Private folders
+/ignoreMe
