@@ -1,0 +1,479 @@
+/*
+ ******************************************************************************
+ *  Copyright (c) 2015 Particle Industries, Inc.  All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************
+ */
+
+/***
+ *               _    _____  _    _                  
+ *     ___  ___ | |_ |     || |_ |_| _____  ___  ___ 
+ *    |   || -_||  _||   --||   || ||     || -_||_ -|
+ *    |_|_||___||_|  |_____||_|_||_||_|_|_||___||___|
+ *     . . . a globally-distribued ambient wind instrument                                            
+ */
+ 
+//Updated 19 March 2016 
+
+ #include "application.h"
+ #include "HttpClient/HttpClient.h"
+
+
+// Include HTTP library and HTTP variables, used to pull IP address and geolocation based on IP
+ HttpClient http;
+ http_request_t request;
+ http_response_t response;
+// Headers currently need to be set at init, useful for API keys etc.
+ http_header_t headers[] = {
+    //  { "Content-Type", "application/json" },
+    //  { "Accept" , "application/json" },
+    { "Accept" , "*/*"},
+    { NULL, NULL } // NOTE: Always terminate headers will NULL
+};
+
+//Photon initialization variables
+int sensor0 = 0;int sensor1 = 1;int sensor2 = 2;int sensor3 = 3;int sensor4 = 4;int sensor5 = 5;
+int sensorState0;int sensorState1;int sensorState2;int sensorState3;int sensorState4;int sensorState5;
+
+//Variables to hold sensor initialization values
+String chimeKeeper, chimeCity, chimeLat, chimeLon, chimeDes, chimeSet;
+String IP; //to hold the IP address
+String jsonMess; //to hold the geolocation info
+byte mac[6];
+String chimeMac;
+
+//Create an object to hold user data in EEPROM/non-volatile memory
+struct UserData{
+char keeperStore[40];
+char cityStore[40];
+char latStore[10];
+char lonStore[10];
+char desStore[200];
+char sonStore[10];
+};
+
+//A return variable for the resetSensor function which the Cloud needs . . . go figure.
+int resetSensor(String command);
+int rebootSensor(String command);
+
+//Some default values for the sensor stored variables
+UserData userData = {"None provided", "auto", "auto", "auto", "None provided.", "n/a"};
+
+//User input flags to set city, latitude, and longitude by IP geolocation automagically
+boolean userInputFlag = false;
+boolean cityAutoSet = false;
+boolean latAutoSet = false;
+boolean lonAutoSet = false;
+
+//Char array to hold the broadcast message
+char strikeString[128];
+char chimeString[128];
+
+//Debounce delay for hall sensors
+int bounceDelay = 125;
+
+////////////////////////////////////////////////////////////////////////////////
+//NETWORK COMMUNICATION (PUBLISH) FUNCTIONS . . . . . . . . . . . . . . . . . .
+void strike(int chimeNum){
+    sprintf(strikeString,"%f:%f:%i", chimeLat.toFloat(), chimeLon.toFloat(), chimeNum);
+    sprintf(chimeString, "{\"lt\": %f, \"ln\": %f, \"cn\": %i}", chimeLat.toFloat(), chimeLon.toFloat(), chimeNum);
+    Serial.println(chimeString);
+    Particle.publish("data", strikeString);
+    Particle.publish("json", chimeString);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//HTTP REQUEST (GET) FUNCTIONS . . . . . . . . . . . . . . . . . . . . . . . . 
+
+String getIP(){
+    request.hostname = "bot.whatismyipaddress.com";
+    request.port = 80;
+    request.path = "/";
+    http.get(request, response, headers);
+    IP = response.body;
+    return IP;
+}
+
+String getGeoData(String IP){
+    request.hostname = "ip-api.com";
+    request.port = 80;
+    request.path = "/json/" + IP;
+    http.get(request, response, headers);
+    String geoData = response.body.trim();
+    return geoData;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//USER MODIFICATION FUNCTIONS . . . . . . . . . . . . . . . . . . . . . . . . .
+void dataMessage(){
+    Serial.println(":::::CURRENT USER DATA :::::");
+    Serial.print("1. Chimekeeper is: "); 
+    Serial.println(chimeKeeper);
+    Serial.print("2. Node is located in: "); 
+    Serial.print(chimeCity); if(cityAutoSet == true){Serial.println(" (auto)");} else {Serial.println();}
+    Serial.print("3. Node latitude is: "); 
+    Serial.print(chimeLat); if(latAutoSet == true){Serial.println(" (auto)");} else {Serial.println();}
+    Serial.print("4. Node longitude is: ");
+    Serial.print(chimeLon); if(lonAutoSet == true){Serial.println(" (auto)");} else {Serial.println();}
+    Serial.print("5. The chime description reads: "); 
+    Serial.println(chimeDes);
+    Serial.print("6. The chime set for sonification on the web is: "); 
+    Serial.println(chimeSet);
+    Serial.println("7. Write changes to memory and exit."); 
+    Serial.println("8. Exit. Changes to user data will NOT be saved."); 
+    Serial.print("IP is: "); 
+    Serial.println(IP);
+    Serial.println();
+    Serial.print("To change data, press the corresponding # of the field to change: ");
+}
+
+void changeKeeper(){
+    Serial.flush();
+    Serial.println();
+    Serial.print("Current chimekeeper name is: "); Serial.println(chimeKeeper);
+    Serial.println();
+    Serial.print("Type in the new name of the chimekeeper and hit RETURN (not to exceed 40 characters including spaces): ");
+    String incoming = String(40);
+    incoming = Serial.readStringUntil(13);
+    chimeKeeper = incoming.trim();
+    Serial.print("The chimekeeper name has been changed to: "); Serial.println(chimeKeeper);        
+    Serial.println();
+}
+
+void changeCity(){
+    Serial.flush();
+    Serial.println();
+    Serial.print("Current node location is: ");Serial.println(chimeCity);
+    Serial.println();
+    Serial.print("Type in the location of the node and hit RETURN (not to exceed 40 characters including spaces): ");
+    String incoming = String(40);
+    incoming = Serial.readStringUntil(13);
+    chimeCity = incoming.trim();
+    Serial.print("The location of the node has been changed to: ");Serial.println(chimeCity);        
+    Serial.println();
+    cityAutoSet = false;
+}
+void changeLat() {
+    Serial.flush();
+    Serial.println();
+    Serial.print("Current node latitude is: ");Serial.println(chimeLat);
+    Serial.println();
+    Serial.print("Type in custom latitude: ");
+    String incoming = String(10);
+    incoming = Serial.readStringUntil(13);
+    chimeLat = incoming.trim();
+    Serial.print("The chime node latitude has been changed to: ");Serial.println(chimeLat);        
+    Serial.println();
+    latAutoSet = false;
+}
+
+void changeLon() {
+    Serial.flush();
+    Serial.println();
+    Serial.print("Current node latitude is: ");Serial.println(chimeLon);
+    Serial.println();
+    Serial.print("Type in custom longitude: ");
+    String incoming = String(10);
+    incoming = Serial.readStringUntil(13);
+    chimeLon = incoming.trim();
+    Serial.print("The chime node longitude has been changed to: ");Serial.println(chimeLon);        
+    Serial.println();
+    lonAutoSet = false;
+}
+
+void changeDes(){
+    Serial.flush();
+    Serial.println();
+    Serial.print("Current description is: ");Serial.println(chimeDes);
+    Serial.println();
+    Serial.print("Type in new description, dude, up to 200 characters and hit return to sumbmit. Anything over 200 will be truncated: ");
+    String incoming = String(200);
+    incoming = Serial.readStringUntil(13);
+    chimeDes = incoming.trim();
+    Serial.print("The chime description has been changed to: ");Serial.println(chimeDes);        
+    Serial.println();
+}
+
+void changeSet(){
+    Serial.flush();
+    Serial.println();
+    Serial.print("Current description is: ");Serial.println(chimeSet);
+    Serial.println();
+    Serial.println("Not currently implemented.");
+    String incoming = String(15);
+    incoming = Serial.readStringUntil(13);
+    chimeSet = incoming.trim();
+    Serial.print("The chime node chimeSet has been changed to: ");Serial.println(chimeSet);        
+    Serial.println();
+}
+
+String getLat(String jsonMess){
+    String latString = jsonMess.substring(jsonMess.indexOf("lat") + 5, jsonMess.indexOf("lon") - 2);
+    return latString;
+}
+
+String getLon(String jsonMess){
+    String lonString = jsonMess.substring(jsonMess.indexOf("lon") + 5, jsonMess.indexOf("org") - 2);
+    return lonString;
+}
+
+String getCity(String jsonMess){
+    String cityString = jsonMess.substring(jsonMess.indexOf("city") + 7, jsonMess.indexOf("country") - 3);
+    return cityString;
+}
+
+//////////////////////////////////////////////////
+//EEPROM FUNCTIONS . . . . . . . . . . . . . . . .
+void writeUserData(){
+chimeKeeper.toCharArray(userData.keeperStore, 20);
+chimeCity.toCharArray(userData.cityStore, 20);
+chimeLat.toCharArray(userData.latStore, 10);
+chimeLon.toCharArray(userData.lonStore, 10);
+chimeDes.toCharArray(userData.desStore, 120);
+chimeSet.toCharArray(userData.sonStore, 10);
+EEPROM.put(1, userData);
+}
+
+int resetSensor(String command){
+    if(command == "reset")
+  {
+    chimeKeeper = "Anonymous.";
+    chimeCity = "auto";
+    chimeLat = "auto";
+    chimeLon = "auto";
+    chimeDes = "None provided, yet.";
+    chimeSet = "Not implemented, yet.";
+    writeUserData();
+    return 1;
+    System.reset();
+  }
+  else return -1;
+}
+
+int rebootSensor(String command){
+    if(command == "reboot"){
+        System.reset();
+        return 1;
+    }
+    else return -1;
+}
+
+//SETUP/////////////////////////////////////////////////////////////////////////////
+/* executes once at startup */
+void setup() {
+
+ pinMode(sensor0, INPUT_PULLUP); //Pin setup
+  pinMode(sensor1, INPUT_PULLUP);     
+  pinMode(sensor2, INPUT_PULLUP);     
+  pinMode(sensor3, INPUT_PULLUP);     
+  pinMode(sensor4, INPUT_PULLUP);     
+  pinMode(sensor5, INPUT_PULLUP);   
+  
+  //Setup variables exposed to the cloud
+  Particle.variable("chimeCity", chimeCity);
+  Particle.variable("chimeLat", chimeLat);
+  Particle.variable("chimeLon", chimeLon);
+  Particle.variable("chimeDes", chimeDes);
+  Particle.variable("chimeIP", IP);
+  Particle.variable("chimeMAC", chimeMac);
+  
+  //Setup functions exposed to the cloud
+  Particle.function("reset", resetSensor);
+  Particle.function("reboot", rebootSensor);
+  
+  //Read the data stored in EEPROM
+  EEPROM.get(1, userData);
+
+  chimeKeeper = userData.keeperStore; //set sensor values to user data saved in EEPROM
+  chimeCity = userData.cityStore;
+  chimeLat = userData.latStore;
+  chimeLon = userData.lonStore;
+  chimeDes = userData.desStore;
+  chimeSet = userData.sonStore;
+  
+  if(digitalRead(sensor0) == LOW){ //if Hall #1 (sensor0) is low, go into WiFi setup mode
+    WiFi.listen();
+    }
+    
+  if(digitalRead(sensor2) == LOW){ //if Hall #3 (sensor2) is low, go into user input mode
+    userInputFlag = true;
+    Serial.begin(9600); 
+    Serial.print("User Data Mode . . .");
+    Serial.println(sizeof(userData));
+    delay(1000);
+    }
+    
+//   if(digitalRead(sensor4) == LOW){
+//     Serial.begin(9600); 
+//     delay(1000);
+//     }
+
+  IP = getIP();
+  String geoData = getGeoData(IP);
+  
+  
+  WiFi.macAddress(mac);
+  for(int i = 0; i < 6; i++){
+  chimeMac += String(mac[i], HEX);
+    if(i <= 4){
+    chimeMac += ":";
+    }
+  }
+  
+  delay(5000);
+  
+  if (chimeLat == "auto"){
+      latAutoSet = true;
+      chimeLat = (getLat(geoData));
+  }
+  
+  if (chimeLon == "auto"){
+      lonAutoSet = true;
+      chimeLon = (getLon(geoData));
+  }
+  
+  if (chimeCity == "auto"){
+      cityAutoSet = true;
+      chimeCity = (getCity(geoData));
+  }
+
+
+  /*
+  Serial.println(userData.latStore);
+  Serial.println(userData.lonStore);
+  Serial.println(geoData);
+  Serial.println(getLat(geoData));
+  Serial.println(getLon(geoData));
+  Serial.println(cityAutoSet);
+  Serial.println(latAutoSet);
+  Serial.println(lonAutoSet);
+  */
+
+}
+
+/* executes continuously after setup() runs */
+void loop() {
+
+while (userInputFlag){
+        // Particle.process();
+        Serial.setTimeout(60000);
+        if(Serial.available() > 0){
+            String theChoice = Serial.readStringUntil(13);
+            int choice = theChoice.toInt();
+            switch(choice){
+                case 1:
+                changeKeeper();
+                dataMessage();
+                break;
+                
+                case 2:
+                changeCity();
+                dataMessage();
+                break;
+                
+                case 3:
+                changeLat();
+                dataMessage();
+                break;
+                
+                case 4:
+                changeLon();
+                dataMessage();
+                break;
+                
+                case 5:
+                changeDes();
+                dataMessage();
+                break;
+                
+                case 6:
+                Serial.println("Soon you will be able to choose which files to use for web sonification of data, but not yet.");
+                changeSet();
+                dataMessage();
+                break;
+                
+                case 7:
+                userInputFlag = false;
+                Serial.println("Exiting configuration, closing/severing serial connection.");
+                Serial.println();
+                Serial.println("You MUST power cycle (REBOOT) you sensor (unplug the usb and plug it back in) in order for changes to take effect!!!");
+                
+                if(cityAutoSet == true){chimeCity = "auto";} //don't write the value pulled from auto, write the state "auto"
+                if(latAutoSet == true){chimeLat = "auto";}
+                if(lonAutoSet == true){chimeLon = "auto";}
+                
+                writeUserData();
+                Serial.println("User data written to memory.");
+                delay(2000);
+                Serial.end();
+                System.reset();
+                break;
+                
+                case 8:
+                userInputFlag = false;
+                Serial.println("User data has NOT been changed.");
+                delay(2000);
+                Serial.end();
+                System.reset();
+                break;
+                
+                default:
+                dataMessage();
+                break;
+            }
+            Serial.flush();
+        }
+    }
+ 
+
+    if(digitalRead(sensor0) == LOW){
+        //Spark.publish("Strike", "0");
+        strike(0);
+        // Serial.println("0");
+        delay(bounceDelay);
+    }
+    
+    if(digitalRead(sensor1) == LOW){
+        strike(1);
+        // Serial.println("1");
+        delay(bounceDelay);
+    }
+    
+    if(digitalRead(sensor2) == LOW){
+        strike(2);
+        // Serial.println("2");
+        delay(bounceDelay);
+    } 
+    
+    if(digitalRead(sensor3) == LOW){
+        strike(3);
+        // Serial.print("3");
+        delay(bounceDelay);
+    }  
+    
+    if(digitalRead(sensor4) == LOW){
+        strike(4);
+        // Serial.println("4");
+        delay(bounceDelay);
+    }  
+    
+    if(digitalRead(sensor5) == LOW){
+        strike(5);
+        // Serial.println("5");
+        delay(bounceDelay);
+    }
+
+
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>netChimes</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+  <link rel="stylesheet" href="assets/CSS/netChimes.css">
+</head>
+
+<body>
+  <div class="w3-container w3-margin-top w3-margin-bottom">
+      <div class="w3-container">
+        <div style="float: left">
+          <h1 style="line-height: 100%">netChimes</h1>
+          <h5 style="line-height: 60%; font-size: 16px;"><em>A globally distributed, wind-actuated instrument</em></h5>
+        </div>
+          <ul class="w3-navbar w3-margin-top" style="float: right;">
+          <li><a href="http://www.netchimes.org">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="sensor.html">Sensor</a></li>
+          <li><a href="http://www.netchimes.org/status.html">Status</a></li>
+          <li><a href="mailto:jason@netchimes.org?Subject=A message from netChimes.org" target="_top">Contact</a></li>
+          </ul>
+      </div>
+
+
+
+<div class="w3-container">
+
+    <h3>the netChimes Sensor</h3>
+    <center><iframe src="https://player.vimeo.com/video/167282839?byline=0&portrait=0" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></center>
+
+    <h4><em>Introduction</em></h4>
+
+    <p>Thank you for contributing to the netChimes project by agreeing to host a sensor node in your area. This page and accompanying video will cover your netChimes sensor setup.  When your sensor arrives, it will come in two parts: the sensor housing and the wind sail with support structure. Your sensor is an integral part of the netChimes project, relaying ambient wind activity to the netChimes server which broadcasts your sensor to the world.</p>
+
+    <p>The sensor will need to be configured to connect to your wireless Internet (WiFi) network. To make the connection, you will need to program the sensor via the USB serial port connector attached to the board. You may use any serial emulator to do this, but we recommend <em>CoolTerm</em> which is available for free at this URL:</p>
+
+    <p><center><a href="http://freeware.the-meiers.org"><h4>http://freeware.the-meiers.org</a></h4></center></p>
+
+    <p>Scroll down to the CoolTerm software and download the appropriate version for your operating system.</p>
+
+    <em><h4>The network</h4></em>
+
+    <p>This is a good time to mention that your sensor will only connect to a WiFi router that has an open network. Some routers, such as those found at a library or coffeeshop, require the user to first visit a website and agree to terms and conditions, at which point the browser connects you to the network. Your sensor cannot connect to these types of networks. If you normally connect to the Internety by selecting the network name and providing a password, then you should be fine.</p>
+
+    <em><h4>Configuration</h4></em>
+
+    <p>Once the software is downloaded, open the CoolTerm application and connect your USB device. The LED on the sensor board should be blinking green, indicating the WiFi connection is not yet configured correctly.</p>
+
+    <p>We need to place the sensor into configuration mode in order to change its settings. To do this, remove the bottom plate of the sensor housing by unscrewing the four nuts and gently pulling up at the corners. To put your sensor into WiFI configuration mode, press down on the SETUP button until the LED blinks BLUE. The sensor is now ready to be configured.<p>
+     
+    <p>In the CoolTerm application, open the options menu, and from the SERIAL PORT section select RE-SCAN SERIAL PORTS and then select the correct USB modem that appears in the PORT pull-down menu. Next, move to the TERMINAL section and make sure LOCAL ECHO is NOT selected. Select OK to close the OPTION menu.</p>
+
+    <p>To connect to the sensor, select the CONNECT button. Activity lights at the bottom of the window will turn green if you are connected.  In the application window, type the letter ’w’ for WiFi. You should receive a prompt to type in your SSID, the identifying name of your WiFi network. Type in the network name and press RETURN.</p>
+
+    <p>You will next be prompted to identify the type of security your router uses. If you don’t know, you might check your router. Or, you may need to go through this process a few times until you get the right configuration. Select your security type and press RETURN.</p>
+
+    <p>Finally, enter the network password and press RETURN.</p>
+
+    <p>Your sensor should reset and flash a few different colors. If you see a slowly pulsing or ‘breathing’ cyan light after a few seconds, your sensor is connected to the cloud. If not, try configuring again. If you continue to have problems, contact <a href="mailto:jason@netchimes.org?Subject=A message from netChimes.org" target="_top">jason@netchimes.org</a> with a description of your problem. You may now close the CoolTerm application and unplug the sensor. The network and password will be held in memory and reconnect when powered up again.</p>
+
+    Reattach the bottom plate to the sensor housing. Be sure the USB cable is properly placed in the cable channel and that the plate is aligned correctly with the housing profile. Only tighten the nuts with your fingers. Any tighter, may risk damaging the housing. 
+
+    </P>You can check that your sensor is connected to the server by visiting: <a href="http://www.netchimes.org/status/">www.netchimes.org/status/</A> If all goes well, your sensor should appear on the list.</P>
+
+    <em><h4>Installation</h4></em>
+
+    <p>The pendulum structure (the neck and sail) can now be inserted into the mounting hole. The fit will be tight, but should be manageable. Always grab the neck at its base and not from the top. Insert the neck until it reaches the bottom of the hole, and then pull up slightly until the pendulum is about 2 millimeters above the surface of the housing. The pendulum should swing freely.</p>
+
+    <p>Your sensor is powered by 5 volts delivered via a USB cable. You will need to provide a USB extension cable and connect it to an appropriate 5 volt source. We suggest a stand-alone USB power block to ensure constant proper voltage.</p>
+
+    <p>The sensor should be placed on a flat surface out of doors, and shims placed beneath to level the sensor, such that the pendulum hangs in the center of the sensor ring. A window sill or back porch is a good place to install your sensor. If undamaged, the sensor will remain water resistant. Debris such as leaves and snow should be removed from the sensor to ensure functionality of the device.</p>
+
+    <em><h4>Localization</h4></em>
+
+    <p>By default, the sensor will attempt to geolocate itself via your router’s IP address. This generally works well in populated areas, but can be less precise in rural ones. The sensor will be assigned an approximate latitude and longitude and try to identify the nearest city or population center.</p>
+
+    <p>You can override this geolocation feature by assigning the sensor values directly, as well as associate your name and a brief description to the sensor. These customizations will be discussed in a separate tutorial.</p>
+
+    <p>Thank for supporting the netChimes project by hosting a sensor node, you are now an official chimeKeeper.</p>
+</div>
+
+<div class="w3-container w3-margin-top w3-margin-bottom" >
+  <div class="w3-container">
+    <center><span style="font-size: small" class="copy-left">&copy;</span>
+    <span style="line-height: 10%; font-size: small">2016 The netChimes Group</span></center>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

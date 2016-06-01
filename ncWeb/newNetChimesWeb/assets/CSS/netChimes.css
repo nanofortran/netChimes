@@ -1,5 +1,5 @@
 body {
-	background-color: #36454F;
+	background-color: lightgray;
 }
 
 @keyframes ping {
@@ -94,7 +94,7 @@ body {
 	transform: translate3d(-50%, -50%, 0);
 	/*border: 1px solid;*/
 	border-radius: 50%;
-	background-color: lime;
+	background-color: blue;
 	pointer-events: none;
 }
 

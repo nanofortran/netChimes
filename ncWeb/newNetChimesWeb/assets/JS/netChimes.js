@@ -20,10 +20,19 @@ var southWest = L.latLng(-80, -170),
     northEast = L.latLng(80, 170),
     bounds = L.latLngBounds(southWest, northEast);    
 
-var base = new L.tileLayer( 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+// var base = new L.tileLayer( 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+//   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+//   maxZoom: 10,
+//   minZoom: 2,
+//   noWrap: true
+// });
+
+
+var base = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+  subdomains: 'abcd',
   maxZoom: 10,
-  minZoom: 2,
+  minZoo: 2,
   noWrap: true
 });
 
@@ -165,11 +174,13 @@ var Chicago = L.latLng(41.981204,-87.666591);
 var Seattle = L.latLng(47.654859,-122.306767);
 var Bournemouth = L.latLng(50.720000,-1.880000);
 var Melbourne = L.latLng(-37.896254,145.064815);
-var Hilda = L.latLng(30.586851, -99.114495);
-var Tromso = L.latLng(69.649208, 18.955324);
-var Seoul = L.latLng(37.565833, 126.978888);
+//var Hilda = L.latLng(30.586851, -99.114495);
+//var Tromso = L.latLng(69.649208, 18.955324);
+//var Seoul = L.latLng(37.565833, 126.978888);
+var Stockholm = L.latLng(59.3333333, 18.05);
+var Tokyo = L.latLng(35.652832, 139.839478);
 
-var locations = [Chicago, Seattle, Bournemouth, Melbourne, Hilda, Tromso, Seoul];
+var locations = [Chicago, Seattle, Bournemouth, Melbourne, Tokyo, Stockholm];
 
 for (var i = 0; i < locations.length; i++){
 var marker = new L.marker(locations[i], {icon: cities}).addTo(map);

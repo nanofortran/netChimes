@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>netChimes</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+  <link rel="stylesheet" href="assets/CSS/netChimes.css">
+</head>
+
+<body>
+
+
+  <div class="w3-container w3-margin-top w3-margin-bottom">
+      <div class="w3-container">
+        <div style="float: left">
+          <h1 style="line-height: 100%">netChimes</h1>
+          <h5 style="line-height: 60%; font-size: 16px;"><em>A globally distributed, wind-actuated instrument</em></h5>
+        </div>
+
+          <ul class="w3-navbar w3-margin-top" style="float: right;">
+          <li><a href="http://www.netchimes.org">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="sensor.html">Sensor</a></li>
+          <li><a href="http://www.netchimes.org/status.html">Status</a></li>
+          <li><a href="mailto:jason@netchimes.org?Subject=A message from netChimes.org" target="_top">Contact</a></li>
+          </ul>
+    </div>
+
+<!--   </div> -->
+
+  <div class="w3-container">
+
+<div id="demo" style="width: 95%; margin: auto"></div>
+
+<script>
+var upMess = "";
+var downMess = "";
+var updateMess = "";
+
+socket= new WebSocket('ws://www.mediatedspaces.net:4050');
+
+socket.onopen= function() {
+    // socket.send('hello');
+};
+
+socket.onmessage= function(e) {
+  var dataIn = JSON.parse(e.data);
+  for (var i = 0; i < dataIn.length; i++) {
+
+    if(dataIn[i].connected == true){
+      upMess += "<p>" + dataIn[i].name + " is <b>UP!</b> and was last heard at " + dataIn[i].last_heard + ".";
+    };
+
+    if(dataIn[i].connected == false && dataIn[i] != null){
+      downMess += "<p>" + dataIn[i].name + " is <b class='down'>DOWN : (</b>.";
+    };
+  };
+
+  updateMess = "<p><em>This data updates on the server approximately every 10-20 seconds. Reload page to update.</em></p>";
+
+  document.getElementById("demo").innerHTML = "<h3>The following nodes are currently ONLINE:</h3>" + upMess +
+  "<h3>The following nodes are currently OFFLINE:</h3>" + downMess + updateMess;
+  socket.close();
+};
+
+</script>
+
+<style>
+
+b{
+  color: green;
+}
+
+.down{
+  color: red;
+}
+
+
+</style>
+
+
+  <div class="w3-container w3-margin-top w3-margin-bottom" >
+    <div class="w3-container">
+      <center><span style="font-size: small" class="copy-left">&copy;</span>
+      <span style="line-height: 10%; font-size: small">2016 The netChimes Group</span></center>
+    </div>
+  </div>
+
+</div> <!--close continer-->
+</body>
+</html>
