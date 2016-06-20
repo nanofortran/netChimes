@@ -19,9 +19,9 @@ Date.prototype.getGMST = function() {
 L.Terminator = L.Polygon.extend({
     options: {
 	color: '#00',
-	opacity: 0.25,
+	opacity: 0.2,
 	fillColor: '#00',
-	fillOpacity: 0.15,
+	fillOpacity: 0.2,
 	resolution: 2
     },
     
@@ -140,3 +140,4 @@ L.Terminator = L.Polygon.extend({
 L.terminator = function(options) {
     return new L.Terminator(options);
 };
+

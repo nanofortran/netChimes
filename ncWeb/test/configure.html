@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<!-- www.netchimes.org/configure.html-->
+<html lang="en-US">
+
+<!--
+
+IMPORTANT Notes:
+1- File must NOT contain any double quotes (")
+2- Do not add any additional <style> or <script> tags
+3- Do to minification process, you must attach events to DOM elements in javascript and not in the HTML. i.e. do not use <Button onclick=myfunc>
+
+-->
+
+<html>
+
+<head>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <title>Setup your device</title>
+  <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+  <link rel="stylesheet" href="assets/CSS/netChimes.css">
+</head>
+
+<body>
+
+    <div class='w3-container w3-margin-top w3-margin-bottom'>
+      <div class='w3-container'>
+        <div style='float: left'>
+        <h1 style='line-height: 100%'>netChimes</h1>
+        <h5 style='line-height: 60%; font-size: 16px;'><em>A globally distributed, wind-actuated instrument</em></h5>
+        </div>
+
+        <ul class='w3-navbar w3-margin-top' style='float: right;'>
+        <li><a href='http://www.netchimes.org'>Home</a></li>
+        <li><a href='about.html'>About</a></li>
+        <li><a href='sensor.html'>Sensor</a></li>
+        <li><a href='http://www.netchimes.org/status.html'>Status</a></li>
+        <li><a href='mailto:jason@netchimes.org?Subject=A message from netChimes.org' target='_top'>Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class='w3-container' style='width: 95%; margin: auto' >
+
+  <h3>WiFi Connection</h3>
+  
+<!--   <div id='deviceid-div' style='display: none'>  
+    <h3>My device ID:</h3>
+    <input type=text id='device-id' size='25' value='' disabled/>
+    <button type='button' class='input-helper' id='copy-button'>Copy</button>
+  </div> -->
+  
+  <div id='scan-div'>
+    <ol>
+    <li>Place your sensor in <em>WiFi listening mode</em> by holding the SETUP button down until the LED blinks blue.</li>
+    <li>Your sensor is now broadcasting its name via WiFI. Connect your device to the WiFi network named Photon-XXXX.</li>
+    <li>When you have connected, click the SCAN button below.</li>
+  </ol>
+    <button id='scan-button' type='button'>Scan</button>
+  </div>
+
+  <form id='lon-form'>
+    <input type='longitude' id='longitude' size='25' placeholder='longitude'/>
+
+  </form>
+
+
+  <div id='networks-div'>
+  </div>
+  
+  <div id='connect-div' style='display: none'>
+    <p>Don't see your network? Move me closer to your router, then re-scan.</p>
+    <form id='connect-form'>
+      <input type='password' id='password' size='25' placeholder='password'/>
+      <button type='button' class='input-helper' id='show-button'>Show</button>
+      <button type='submit' id='connect-button'>Connect</button>
+    </form>
+  </div>
+
+  <script src='assets/JS/rsa-utils/jsbn_1.js'></script>
+  <script src='assets/JS/rsa-utils/jsbn_2.js'></script>
+  <script src='assets/JS/rsa-utils/prng4.js'></script>
+  <script src='assets/JS/rsa-utils/rng.js'></script>
+  <script src='assets/JS/rsa-utils/rsa.js'></script>
+  <script src='configure.js'></script>
+
+</div>
+
+</body>
+
+
+</html>
+
+
+
+
